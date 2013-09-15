@@ -1,25 +1,28 @@
-Image Classes Plugin For Pelican
-=================================
+# Image Classes Plugin For Pelican
 
-This plugin adds a "landscape" or "portrait" class to all `img` tags.
+This plugin adds "landscape" or "portrait" to the `class` attribute of all `img`
+tags.
 
-Todo
-----
+## Todo
 
 * Setting for limiting the image directories
 * Settings-based rules for classes
 
-Installation
-------------
+## Installation
 
-To enable, ensure that `img_class.py` is put somewhere that is accessible.
-Then use as follows by adding the following to your settings.py:
+This plugin requires [PIL][1] and [BeautifulSoup][2]:
 
-    PLUGIN_PATH = 'path/to/pelican-plugins'
-    PLUGINS = ["img_class"]
+    pip install PIL
+    pip install BeautifulSoup4
 
-`PLUGIN_PATH` can be a path relative to your settings file or an absolute path.
+To enable the plugin, copy the `img_class` package to your `PLUGIN_PATH`, and 
+add `img_class` to the `PLUGINS` setting. See the [Pelican docs][3] for more
+info.
 
-Usage
------
+[1]: http://www.pythonware.com/products/pil/
+[2]: http://www.crummy.com/software/BeautifulSoup/
+[3]: http://docs.getpelican.com/en/latest/plugins.html
+
+## Usage
+
 The plugin will activate upon the `content_object_init` signal of Pelican.
