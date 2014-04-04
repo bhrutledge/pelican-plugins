@@ -92,14 +92,17 @@ class _resizer(object):
         new_filename = "{0}{1}".format(basename, ext)
         return new_filename
 
-    def resize_file_to(self, in_path, out_path):
+    def resize_file_to(self, in_path, out_path, keep_filename=False):
         """ Given a filename, resize and save the image per the specification into out_path
 
         :param in_path: path to image file to save.  Must be supposed by PIL
         :param out_path: path to the directory root for the outputted thumbnails to be stored
         :return: None
         """
-        filename = path.join(out_path, self.get_thumbnail_name(in_path))
+        if keep_filename:
+            filename = path.join(out_path, path.basename(in_path))
+        else:
+            filename = path.join(out_path, self.get_thumbnail_name(in_path))
         if not path.exists(out_path):
             os.makedirs(out_path)
         if not path.exists(filename):
@@ -131,7 +134,10 @@ def resize_thumbnails(pelican):
             for name, resizer in resizers.items():
                 in_filename = path.join(dirpath, filename)
                 logger.debug("Processing thumbnail {0}=>{1}".format(filename, name))
-                resizer.resize_file_to(in_filename, out_path)
+                if pelican.settings.get('THUMBNAIL_KEEP_NAME', False):
+                    resizer.resize_file_to(in_filename, path.join(out_path, name), True)
+                else:
+                    resizer.resize_file_to(in_filename, out_path)
 
 
 def _image_path(pelican):
@@ -146,8 +152,6 @@ def expand_gallery(generator, metadata):
     :return: None
     """
     if "gallery" not in metadata or metadata['gallery'] is None:
-        import pprint
-        pprint.pprint(metadata)
         return  # If no gallery specified, we do nothing
 
     lines = [ ]
@@ -174,4 +178,4 @@ def expand_gallery(generator, metadata):
 
 def register():
     signals.finalized.connect(resize_thumbnails)
-    signals.article_generate_context.connect(expand_gallery)
+    signals.article_generator_context.connect(expand_gallery)
