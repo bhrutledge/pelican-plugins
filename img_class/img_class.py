@@ -6,9 +6,18 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 
-def get_static_path(src, instance):   
+def get_orientation(im):
+    if im.size[0] <= im.size[1]:
+        return 'portrait'
+
+    return 'landscape'
+
+
+def get_static_path(src, instance):
+    # TODO: Refer to better_figures_and_images
+    # TODO: Use Pelican to find static files
     try:
-        img_path = src.split("/static/")[1]
+        img_path = src.split('{filename}')[1]
     except IndexError:
         return None
 
@@ -26,10 +35,7 @@ def content_object_init(instance):
                 continue
 
             im = Image.open(static_path)
-
-            orientation = 'landscape'
-            if im.size[0] <= im.size[1]:
-                orientation = 'portrait'
+            orientation = get_orientation(im)
 
             try:
                 img['class'].append(orientation)
@@ -41,3 +47,4 @@ def content_object_init(instance):
 
 def register():
     signals.content_object_init.connect(content_object_init)
+
